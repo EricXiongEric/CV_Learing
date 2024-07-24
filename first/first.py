@@ -28,3 +28,17 @@ cv.morphologyEx(img,cv.MORPH_GRADIENT,np.ones(3,3))
 cv.morphologyEx(img,cv.MORPH_TOPHAT,np.ones(3,3))
 #黑帽=闭运算减去原式图像，就保留轮廓
 cv.morphologyEx(img,cv.MORPH_BLACKHAT,np.ones(3,3))
+
+#----------------------算子操作-------------------
+#sobel算子：分为x轴和y轴，对于x轴来说矩阵为假如为3*3 [[-1,0,1],-2,0,2,-1,0,1],相当于右边减左边，Y轴来说矩阵就向右旋转90度，就是下面减去上面。
+img = cv.imread("xjpic.jpg",cv.IMREAD_GRAYSCALE)
+res_x = cv.Sobel(img,cv.CV_64F,1,0,ksize=3)#cv.CV_64F这个意思为精度更高，（1,0） 1表示为x轴，ksize为核大小
+res_x = cv.convertScaleAbs(res_x)#把结果转换为绝对值
+res_y = cv.Sobel(img,cv.CV_64F,0,1,ksize=3)
+res_y = cv.convertScaleAbs(res_y)
+res_add = cv.addWeighted(res_x,0.5,res_y,0.5,0)#建议分开操作，而不是（1,1），这样效果更好
+totol_img = np.hstack((img,res_x,res_y,res_add))
+#Scharr算子：跟sobel算子类似，只不过它的细节放大的更大，因为他的卷积核值要大些，对于x轴来说算子核为：假如为3*3 [[-3,0,3],[-10,0,10],[-3,0,3]],y轴同sobel算子一样
+cv.Scharr(img,cv.CV_64F,1,0)#同上面sobel类似，只不过没有卷积核了
+#laplacian算子：它就不分x轴和y轴了，他的核为[[0,1,0],[1,-4,1],[0,1,0]]
+cv.Laplacian(img,cv.CV_64F)
